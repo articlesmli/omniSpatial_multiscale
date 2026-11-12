@@ -2,9 +2,9 @@
 
 ## Overview
 
-**OmniSpatial-MultiScale** is an open-source biological AI simulator that bridges atomic-level biophysics, molecular property prediction, protein structure modeling, molecular dynamics, spatial single-cell perturbation forecasting, and genome-scale systems metabolism. 
+**OmniSpatial-MultiScale** is an open-source biological AI simulator that bridges atomic-level biophysics, molecular property prediction, protein structure modeling, molecular dynamics, spatial single-cell perturbation forecasting, and genome-scale systems metabolism[cite: 1]. 
 
-By combining **Boltz-1 / AlphaFold** 3D structural modeling, **AutoDock Vina** docking, **GROMACS** dynamics, **COBRApy** metabolic flux analysis, and your core **PyTorch / PyTorch Geometric** spatial latent diffusion engine, this framework models biological responses across multiple physical scales—from angstroms to whole-tissue neighborhoods.
+By combining **Boltz-1 / AlphaFold** 3D structural modeling, **AutoDock Vina** docking, **GROMACS** dynamics, **COBRApy** metabolic flux analysis, and your core **PyTorch / PyTorch Geometric** spatial latent diffusion engine, this framework models biological responses across multiple physical scales—from angstroms to whole-tissue neighborhoods[cite: 1].
 
 ---
 
@@ -24,16 +24,25 @@ By combining **Boltz-1 / AlphaFold** 3D structural modeling, **AutoDock Vina** d
 [ Cell Morphology ]     ──► Vision Features               ──┘                                                        ▼
                                                                                                                 [ COBRApy Metabolic Flux ]
 
-
 ```
 
 The pipeline operates across modular multi-scale stages:
 
 1. **Structural & Biophysics Bridge (`models/structural_bridge.py`, `models/docking_score.py`):** Ingests protein structures from **Boltz-1 / AlphaFold**, computes small-molecule binding energies via **AutoDock Vina**, and validates conformational stability using **GROMACS**.
+
+
 2. **Foundation Backbone (`models/transformer.py`):** Encodes binned gene expression tokens and applies masked language modeling objectives to extract clean representations.
+
+
 3. **Spatial Graph Integration (`models/spatial_gnn.py`):** Constructs local k-NN spatial neighborhood graphs and aligns transcriptomic, morphological, and structural features via multi-head cross-attention (`SpatialCrossAttentionFusion`).
+
+
 4. **Conditional Perturbation Head (`models/perturbation.py`):** Concatenates noisy target states (`z_t`), multimodal untreated control embeddings (`z_ctrl`), perturbation/docking embeddings (`perturb_ids`), and diffusion timesteps (`t`) to predict reverse denoising steps.
+
+
 5. **Systems Metabolism (`models/cobra_flux.py`, `scripts/metabolic_simulation.py`):** Translates predicted single-cell expression profiles into genome-scale metabolic flux balance models using **COBRApy** to verify phenotypic viability and cellular growth rates.
+
+
 
 ---
 
@@ -44,6 +53,8 @@ The pipeline operates across modular multi-scale stages:
 * **Structural Biophysics & Binding (`AutoDock Vina` & `GROMACS`):** Computes binding free energies ($\Delta G$) and validates conformational stability for small-molecule candidates.
 * **Metabolic Phenotyping (`COBRApy`):** Evaluates whether predicted single-cell transcriptomic shifts maintain cellular viability, growth rates, and metabolic fluxes via Flux Balance Analysis (FBA).
 * **Automated CI/CD & Containerization:** Fully containerized with Docker (`Dockerfile`) and integrated with GitHub Actions (`ci_cd.yaml`) for automated testing across Linux environments.
+
+
 
 ---
 
@@ -60,8 +71,14 @@ The pipeline operates across modular multi-scale stages:
 OmniSpatial-MultiScale supports standard single-cell and spatial omics file formats:
 
 * **Foundation Single-Cell Data:** Uses 10x Genomics PBMC datasets via `scvi-tools` for single-cell modeling and perturbation simulation.
+
+
 * **Perturbation Datasets (`perturbation_data.h5ad`):** Ingests control-versus-stimulated single-cell AnnData files containing expression matrices and `pert_id` / `condition` observation columns.
+
+
 * **Metabolic Models:** Supports SBML-format genome-scale metabolic models (e.g., BiGG `iJO1366` or human Recon models) for COBRApy flux balance analysis.
+
+
 
 ---
 
@@ -127,10 +144,12 @@ omniSpatial_multiscale/
 │   ├── evaluate.py                    # Reverse DDPM sampling & correlation metrics
 │   └── metabolic_simulation.py        # FBA phenotypic viability screening
 ├── tests/
+│   ├── test_imports.py                # Core import & package tests
 │   ├── test_models.py                 # Architecture unit tests
 │   ├── test_docking.py                # Vina and structure feature tests
 │   └── test_diffusion.py              # Diffusion conditioning & overfit tests
 ├── Dockerfile                         # Production container definition
+├── environment.yaml                   # Conda environment dependency spec
 ├── LICENSE                            # MIT License
 ├── README.md
 ├── requirements.txt
@@ -162,15 +181,13 @@ brew install gromacs
 
 ```
 
-### 2. Virtual Environment & Python Dependencies
+### 2. Conda / Mamba Environment Setup
+
+Create and activate the managed Conda environment (`omnispatial_env`) using `environment.yaml`:
 
 ```bash
-python -m venv omnispatial_env
-source omnispatial_env/bin/activate
-pip install --upgrade pip setuptools wheel
-pip install torch torchvision torchaudio --index-url [https://download.pytorch.org/whl/cu121](https://download.pytorch.org/whl/cu121)
-pip install torch-scatter torch-sparse -f [https://data.pyg.org/whl/torch-2.3.0+cu121.html](https://data.pyg.org/whl/torch-2.3.0+cu121.html)
-pip install -r requirements.txt
+conda env create -f environment.yaml
+conda activate omnispatial_env
 
 ```
 
@@ -203,5 +220,5 @@ PYTHONPATH=. python -u scripts/metabolic_simulation.py --model data/metabolic_mo
 
 ## License
 
-This project is open-source and available under the terms of the [MIT License]
+This project is open-source and available under the terms of the [MIT License].
 
