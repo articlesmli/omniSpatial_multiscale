@@ -19,4 +19,4 @@ COPY --chown=$MAMBA_USER:$MAMBA_USER . /app
 ENV PYTHONPATH=/app
 
 # Use micromamba run so commands execute inside the conda environment
-CMD ["micromamba", "run", "-n", "omnispatial_env", "pytest", "tests/"]
+CMD ["micromamba", "run", "-n", "omnispatial_env", "pytest", "tests/"] 
