@@ -4,25 +4,19 @@ FROM python:3.10-slim AS builder
 WORKDIR /app
 
 # Install system build dependencies
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    build-essential \
-    git \
-    autodock-vina \
-    gromacs \
-    && rm -rf /var/lib/apt/lists/*
+FROM mambaorg/micromamba:1.5.8
 
-# Upgrade pip and install Python packages
-COPY requirements.txt .
-RUN pip install --no-cache-dir --upgrade pip setuptools wheel && \
-    pip install --no-cache-dir torch torchvision --index-url https://download.pytorch.org/whl/cpu && \
-    pip install --no-cache-dir -r requirements.txt
+# Copy and create the named Conda environment from environment.yaml
+COPY --chown=$MAMBA_USER:$MAMBA_USER environment.yaml /tmp/environment.yaml
+RUN micromamba env create -n omnispatial_env -f /tmp/environment.yaml && \
+    micromamba clean --all --yes
 
-# Copy source code into container
-COPY . .
+# Set working directory
+WORKDIR /app
 
-# Set environment variables
+# Copy project files
+COPY --chown=$MAMBA_USER:$MAMBA_USER . /app
 ENV PYTHONPATH=/app
-ENV PYTHONUNBUFFERED=1
 
-# Default execution command
-CMD ["python", "scripts/fine_tune.py"]
+# Use micromamba run so commands execute inside the conda environment
+CMD ["micromamba", "run", "-n", "omnispatial_env", "pytest", "tests/"]
