@@ -18,20 +18,16 @@ jobs:
     - name: Checkout Repository
       uses: actions/checkout@v4
 
-    - name: Set up Conda Environment & Dependencies
-      uses: conda-incubator/setup-miniconda@v3
+    - name: Set up Micromamba & Environment
+      uses: mamba-org/setup-micromamba@v1
       with:
-        auto-update-conda: true
-        miniconda-version: 'latest'
-        python-version: '3.10'
-        channels: conda-forge, bioconda, pytorch, defaults
-        channel-priority: strict
-        activate-environment: omnispatial_env
         environment-file: environment.yaml
-        use-mamba: true
+        environment-name: omnispatial_env
+        init-shell: bash
+        cache-environment: true
 
     - name: Run Unit Tests with Coverage
-      shell: bash -l {0}
+      shell: micromamba-shell {0}
       run: |
         export PYTHONPATH=.
         pytest tests/ --cov=omniSpatial_multiscale --cov-report=term
