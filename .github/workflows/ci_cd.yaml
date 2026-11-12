@@ -14,48 +14,27 @@ jobs:
   test:
     runs-on: ubuntu-22.04
     
-    strategy:
-      matrix:
-        python-version: ["3.10", "3.11"]
-
     steps:
     - name: Checkout Repository
       uses: actions/checkout@v4
 
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v5
+    - name: Set up Mamba / Conda Environment
+      uses: conda-incubator/setup-miniconda@v3
       with:
-        python-version: ${{ matrix.python-version }}
-        cache: 'pip'
+        auto-update-conda: true
+        miniconda-version: 'latest'
+        python-version: '3.10'
+        channels: conda-forge, bioconda, pytorch, defaults
+        channel-priority: strict
+        activate-environment: omnispatial_env
+        use-mamba: true
 
-    - name: Cache Pip Dependencies
-      uses: actions/cache@v4
-      with:
-        path: ~/.cache/pip
-        key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
-        restore-keys: |
-          ${{ runner.os }}-pip-
-
-    - name: Install System Dependencies (AutoDock Vina & GROMACS)
+    - name: Install Environment Dependencies
       run: |
-        sudo apt-get update
-        sudo apt-get install -y autodock-vina gromacs
+        mamba env update -n omnispatial_env -f environment.yaml
 
-    - name: Install Python Dependencies
-      run: |
-        python -m pip install --upgrade pip setuptools wheel
-        # Install PyTorch CPU version for CI testing to save bandwidth and runner time
-        pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu
-        pip install -r requirements.txt
-        pip install pytest pytest-cov
-
-    - name: Run Architecture & Diffusion Unit Tests with Coverage
+    - name: Run Unit Tests with Coverage
+      shell: bash -l {0}
       run: |
         export PYTHONPATH=.
-        pytest tests/ --cov=omniSpatial_multiscale --cov-report=xml
-
-    - name: Upload Coverage Report
-      uses: codecov/codecov-action@v4
-      with:
-        token: ${{ secrets.CODECOV_TOKEN }}
-        fail_ci_if_error: false
+        pytest tests/ --cov=omniSpatial_multiscale --cov-report=term
