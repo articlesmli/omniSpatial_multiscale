@@ -1,0 +1,22 @@
+# --- Core Deep Learning & Spatial AI ---
+torch>=2.0.0
+torchvision>=0.15.0
+torch-geometric>=2.3.0
+
+# --- Scientific & Numerical Computing ---
+scipy>=1.9.0
+numpy>=1.23.0
+statsmodels<0.15
+
+# --- Bioinformatics & Single-Cell ---
+scanpy>=1.9.0
+anndata>=0.8.0
+pertpy>=0.5.0
+biopython>=1.80
+
+# --- Cheminformatics & Property Prediction ---
+rdkit>=2023.03.1
+
+# --- Systems Biology & Metabolism ---
+cobra>=0.28.0
+
