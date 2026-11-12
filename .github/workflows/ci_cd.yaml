@@ -18,7 +18,7 @@ jobs:
     - name: Checkout Repository
       uses: actions/checkout@v4
 
-    - name: Set up Mamba / Conda Environment
+    - name: Set up Conda Environment & Dependencies
       uses: conda-incubator/setup-miniconda@v3
       with:
         auto-update-conda: true
@@ -27,11 +27,8 @@ jobs:
         channels: conda-forge, bioconda, pytorch, defaults
         channel-priority: strict
         activate-environment: omnispatial_env
+        environment-file: environment.yaml
         use-mamba: true
-
-    - name: Install Environment Dependencies
-      run: |
-        mamba env update -n omnispatial_env -f environment.yaml
 
     - name: Run Unit Tests with Coverage
       shell: bash -l {0}
