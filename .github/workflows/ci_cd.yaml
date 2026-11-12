@@ -31,3 +31,19 @@ jobs:
       run: |
         export PYTHONPATH=.
         pytest tests/ --cov=omniSpatial_multiscale --cov-report=term
+
+  docker-build:
+    runs-on: ubuntu-22.04
+    needs: test # Runs after native tests pass
+    
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+
+    - name: Build Docker Image
+      run: |
+        docker build -t omnispatial-multiscale:latest .
+
+    - name: Test Inside Docker Container
+      run: |
+        docker run --rm omnispatial-multiscale:latest pytest tests/
