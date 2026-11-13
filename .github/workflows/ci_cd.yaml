@@ -18,12 +18,11 @@ jobs:
     - name: Checkout Repository
       uses: actions/checkout@v4
 
-    - name: Set up Micromamba & Environment
-      uses: mamba-org/setup-micromamba@v1
+
+    - name: Set up Micromamba
+      uses: mamba-org/setup-micromamba@v2 
       with:
         environment-file: environment.yaml
-        environment-name: omnispatial_env
-        init-shell: bash
         cache-environment: true
 
     - name: Run Unit Tests with Coverage
