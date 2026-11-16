@@ -2,9 +2,9 @@
 
 ## Overview
 
-**OmniSpatial-MultiScale** is an open-source biological AI simulator that bridges atomic-level biophysics, molecular property prediction, protein structure modeling, molecular dynamics, spatial single-cell perturbation forecasting, and genome-scale systems metabolism[cite: 1]. 
+**OmniSpatial-MultiScale** is an open-source biological AI simulator that bridges atomic-level biophysics, molecular property prediction, protein structure modeling, molecular dynamics, spatial single-cell perturbation forecasting, and genome-scale systems metabolism. 
 
-By combining **Boltz-1 / AlphaFold** 3D structural modeling, **AutoDock Vina** docking, **GROMACS** dynamics, **COBRApy** metabolic flux analysis, and your core **PyTorch / PyTorch Geometric** spatial latent diffusion engine, this framework models biological responses across multiple physical scales—from angstroms to whole-tissue neighborhoods[cite: 1].
+By combining **Boltz-1 / AlphaFold** 3D structural modeling, **AutoDock Vina** docking, **GROMACS** dynamics, **COBRApy** metabolic flux analysis, and your core **PyTorch / PyTorch Geometric** spatial latent diffusion engine, this framework models biological responses across multiple physical scales, from angstroms to whole-tissue neighborhoods.
 
 ---
 
@@ -220,9 +220,11 @@ PYTHONPATH=. python -u scripts/metabolic_simulation.py --model data/metabolic_mo
 
 ## License
 
-This project is open-source and available under the terms of the [MIT License].
+This project is open-source and available under the terms of the MIT License.
 
 ---
+
+
 
 ## Future Roadmap
 
