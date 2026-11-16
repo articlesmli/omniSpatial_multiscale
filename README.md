@@ -222,3 +222,27 @@ PYTHONPATH=. python -u scripts/metabolic_simulation.py --model data/metabolic_mo
 
 This project is open-source and available under the terms of the [MIT License].
 
+---
+
+## Future Roadmap
+
+### Physics & ML Coupling Improvements
+* 1. Differentiable Force Field Integration: Instead of treating Vina docking scores and GROMACS metrics as static precomputed descriptors fed into a separate encoder, integrate end-to-end differentiable physics layers or scoring functions (e.g., using OpenMM-Torch) so gradient signals from the cellular diffusion head can inform molecular conformations.
+* 2. Uncertainty Propagation: Pass confidence bounds (like pLDDT from Boltz-1 or Vina scoring error estimates) directly into the latent diffusion denoiser as variance weights, preventing low-confidence structural predictions from overly distorting cellular perturbation forecasts.
+
+
+### Biological Validation & Multi-Scale Fidelity**
+* 1. Dynamic Gene-Protein-Reaction (GPR) Mapping: Upgrade the COBRApy metabolic flux evaluation script (metabolic_simulation.py) from a static or percentile-based constraint adjustment to a fully dynamic GPR rule mapper that translates single-cell transcriptomic shifts directly into upper/lower reaction capacity bounds.
+* 2. Experimental Benchmark Suites: Implement automated benchmarking against ground-truth Perturb-seq datasets (e.g., Replogle et al. or Norman et al. datasets) inside your evaluation script to calculate out-of-distribution generalization metrics for unseen drug-gene perturbations.
+
+
+### Scalability & Performance Architecture
+* 1. Asynchronous Pipeline Decoupling:** Heavy MD simulations (GROMACS) and docking sweeps (Vina) create massive bottlenecks during dataset generation. Decouple physical sampling from neural network fine-tuning by setting up an asynchronous queue (using Celery, Redis, or Apache Airflow) where structural predictions populate a vector database or feature store independently.
+* 2. Distributed Multi-GPU Training: Expand your PyTorch training loop (fine_tune.py) to support DistributedDataParallel (DDP) or FSDP, which will be essential when scaling up the Masked Gene Transformer backbone to genome-wide scales (15,000+ genes instead of smaller subsets).
+
+### Software Engineering & CI/CD Hardening
+* 1. Expanded Unit & Integration Tests: Add comprehensive unit tests in tests/ covering shape assertions for cross-attention mechanisms, edge cases for infeasible COBRApy solutions, and mock checks for the diffusion denoising loop.
+* * 2. Artifact Tracking & Experiment Logging: Integrate Weights & Biases (wandb) or MLflow into fine_tune.py and evaluate.py to track loss curves, latent space projections, and Pearson/Spearman correlation metrics across training epochs.
+
+---
+
